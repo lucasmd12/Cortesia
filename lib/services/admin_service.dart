@@ -7,10 +7,8 @@ import 'package:lucasbeatsfederacao/utils/logger.dart';
 import 'package:lucasbeatsfederacao/models/system_setting.dart'; // Importar o modelo SystemSetting
 
 class AdminService {
-  // ✅ CORREÇÃO 1: O serviço agora cria sua própria instância do ApiService.
+  // O serviço agora cria sua própria instância do ApiService.
   final ApiService _apiService = ApiService();
-
-  // O construtor antigo foi removido.
 
   // Gerenciamento de Usuários
   Future<List<User>> getAllUsers() async {
@@ -94,6 +92,7 @@ class AdminService {
     try {
       final response = await _apiService.post('/api/admin/clans', clanData);
       if (response is Map<String, dynamic>) {
+        // ✅ CORREÇÃO: Removido o json.encode desnecessário.
         return Clan.fromJson(response);
       } else {
         throw Exception('Formato de resposta inválido para createClan');
@@ -108,6 +107,7 @@ class AdminService {
     try {
       final response = await _apiService.put('/api/admin/clans/$clanId', clanData);
       if (response is Map<String, dynamic>) {
+        // ✅ CORREÇÃO: Removido o json.encode desnecessário.
         return Clan.fromJson(response);
       } else {
         throw Exception('Formato de resposta inválido para updateClan');
@@ -269,7 +269,8 @@ class AdminService {
 
   Future<void> clearSystemCache() async {
     try {
-      await _api_service.post('/api/admin/cache/clear', {});
+      // ✅ CORREÇÃO: Removido o sublinhado extra.
+      await _apiService.post('/api/admin/cache/clear', {});
       Logger.info('Cache do sistema limpo com sucesso.');
     } catch (e, stackTrace) {
       Logger.error('Erro ao limpar cache do sistema', error: e, stackTrace: stackTrace);
@@ -342,8 +343,6 @@ class AdminService {
       rethrow;
     }
   }
-
-  // ✅ CORREÇÃO 2: MÉTODOS MOVIDOS PARA DENTRO DA CLASSE E CORRIGIDOS
   
   /// Cria uma nova federação com território no mapa (apenas ADM).
   Future<Map<String, dynamic>> createFederationWithTerritory({
@@ -355,7 +354,6 @@ class AdminService {
     required double radius,
     String? color,
   }) async {
-    // ✅ CORREÇÃO 3: Endpoint em uma única linha
     const String endpoint = '/api/admin/federations/create-with-territory';
     final body = {
       'name': name,
@@ -392,7 +390,6 @@ class AdminService {
     required double mapY,
     required double radius,
   }) async {
-    // ✅ CORREÇÃO 3: Endpoint em uma única linha
     const String endpoint = '/api/admin/clans/create-with-territory';
     final body = {
       'name': name,
@@ -418,4 +415,4 @@ class AdminService {
       return {'success': false, 'msg': 'Erro interno ao criar clã: ${e.toString()}'};
     }
   }
-} // Fim da classe AdminService
+}
