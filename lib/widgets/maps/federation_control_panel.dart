@@ -1,3 +1,4 @@
+import 'package:lucasbeatsfederacao/screens/federation_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:animations/animations.dart';
 import 'package:lucasbeatsfederacao/models/federation_model.dart';
