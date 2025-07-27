@@ -203,8 +203,9 @@ class FEDERACAOMADApp extends StatelessWidget {
         Provider<StatsService>(
           create: (context) => StatsService(context.read<ApiService>()),
         ),
+        // ✅ CORREÇÃO APLICADA AQUI
         Provider<AdminService>(
-          create: (context) => AdminService(context.read<ApiService>()),
+          create: (context) => AdminService(),
         ),
         Provider<ContextService>(
           create: (context) => ContextService(),
