@@ -168,8 +168,9 @@ class Clan {
     };
   }
 
-  factory Clan.fromJson(String source) => Clan.fromMap(json.decode(source));
+  // ✅ CORREÇÃO APLICADA AQUI
+  // O método agora aceita um Map<String, dynamic> diretamente, que é o que o ApiService retorna.
+  factory Clan.fromJson(Map<String, dynamic> json) => Clan.fromMap(json);
+
   String toJson() => json.encode(toMap());
 }
-
-
