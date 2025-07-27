@@ -1,7 +1,7 @@
-import 'package:lucasbeatsfederacao/screens/federation_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:animations/animations.dart';
 import 'package:lucasbeatsfederacao/models/federation_model.dart';
+import 'package:lucasbeatsfederacao/screens/federation_detail_screen.dart';
 import 'package:lucasbeatsfederacao/screens/admin_manage_clans_screen.dart';
 import 'package:lucasbeatsfederacao/screens/qrr_list_screen.dart';
 import 'package:lucasbeatsfederacao/screens/maps/map_editor_screen.dart';
