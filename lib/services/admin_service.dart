@@ -7,9 +7,10 @@ import 'package:lucasbeatsfederacao/utils/logger.dart';
 import 'package:lucasbeatsfederacao/models/system_setting.dart'; // Importar o modelo SystemSetting
 
 class AdminService {
-  final ApiService _apiService;
+  // ✅ CORREÇÃO 1: O serviço agora cria sua própria instância do ApiService.
+  final ApiService _apiService = ApiService();
 
-  AdminService(this._apiService);
+  // O construtor antigo foi removido.
 
   // Gerenciamento de Usuários
   Future<List<User>> getAllUsers() async {
@@ -93,7 +94,7 @@ class AdminService {
     try {
       final response = await _apiService.post('/api/admin/clans', clanData);
       if (response is Map<String, dynamic>) {
-        return Clan.fromJson(json.encode(response));
+        return Clan.fromJson(response);
       } else {
         throw Exception('Formato de resposta inválido para createClan');
       }
@@ -107,7 +108,7 @@ class AdminService {
     try {
       final response = await _apiService.put('/api/admin/clans/$clanId', clanData);
       if (response is Map<String, dynamic>) {
-        return Clan.fromJson(json.encode(response));
+        return Clan.fromJson(response);
       } else {
         throw Exception('Formato de resposta inválido para updateClan');
       }
@@ -180,8 +181,6 @@ class AdminService {
     }
   }
 
-  // ==================== INÍCIO DA MODIFICAÇÃO ====================
-  /// Define o território de uma federação (apenas ADM).
   Future<void> setFederationTerritory({
     required String federationId,
     required double mapX,
@@ -208,7 +207,6 @@ class AdminService {
       rethrow;
     }
   }
-  // ===================== FIM DA MODIFICAÇÃO ======================
 
   // Gerenciamento de Configurações do Sistema
   Future<SystemSetting> getSystemSettings() async {
@@ -271,7 +269,7 @@ class AdminService {
 
   Future<void> clearSystemCache() async {
     try {
-      await _apiService.post('/api/admin/cache/clear', {});
+      await _api_service.post('/api/admin/cache/clear', {});
       Logger.info('Cache do sistema limpo com sucesso.');
     } catch (e, stackTrace) {
       Logger.error('Erro ao limpar cache do sistema', error: e, stackTrace: stackTrace);
@@ -289,7 +287,6 @@ class AdminService {
     }
   }
 
-  // Outras funcionalidades administrativas
   Future<Map<String, dynamic>> getSystemStats() async {
     try {
       final response = await _apiService.get('/api/admin/stats');
@@ -345,9 +342,9 @@ class AdminService {
       rethrow;
     }
   }
-}
 
-
+  // ✅ CORREÇÃO 2: MÉTODOS MOVIDOS PARA DENTRO DA CLASSE E CORRIGIDOS
+  
   /// Cria uma nova federação com território no mapa (apenas ADM).
   Future<Map<String, dynamic>> createFederationWithTerritory({
     required String name,
@@ -358,9 +355,8 @@ class AdminService {
     required double radius,
     String? color,
   }) async {
-    final endpoint = 
-'/api/admin/federations/create-with-territory
-';
+    // ✅ CORREÇÃO 3: Endpoint em uma única linha
+    const String endpoint = '/api/admin/federations/create-with-territory';
     final body = {
       'name': name,
       'tag': tag,
@@ -396,9 +392,8 @@ class AdminService {
     required double mapY,
     required double radius,
   }) async {
-    final endpoint = 
-'/api/admin/clans/create-with-territory
-';
+    // ✅ CORREÇÃO 3: Endpoint em uma única linha
+    const String endpoint = '/api/admin/clans/create-with-territory';
     final body = {
       'name': name,
       'tag': tag,
@@ -423,5 +418,4 @@ class AdminService {
       return {'success': false, 'msg': 'Erro interno ao criar clã: ${e.toString()}'};
     }
   }
-
-
+} // Fim da classe AdminService
