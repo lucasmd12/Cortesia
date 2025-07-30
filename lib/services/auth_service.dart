@@ -3,12 +3,14 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:lucasbeatsfederacao/models/user_model.dart';
 import 'package:lucasbeatsfederacao/models/role_model.dart';
 import 'package:lucasbeatsfederacao/services/api_service.dart';
+import 'package:lucasbeatsfederacao/services/logout_service.dart';
 import 'package:lucasbeatsfederacao/utils/logger.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService extends ChangeNotifier {
   final ApiService _apiService = ApiService();
+  final LogoutService _logoutService = LogoutService();
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
   bool _isAuthenticated = false;
@@ -67,9 +69,9 @@ class AuthService extends ChangeNotifier {
       throw Exception("Não autenticado");
     }
     try {
-      final response = await _apiService.get("/api/auth/profile", requireAuth: true);
+      final response = await _apiService.get("/api/auth/me", requireAuth: true);
       if (response != null && response is Map<String, dynamic>) {
-        _currentUser = User.fromJson(response);
+        _currentUser = User.fromJson(response['data'] ?? response);
         Logger.info("Perfil do usuário obtido com sucesso: ${_currentUser?.username}");
         _lastErrorMessage = null;
       } else {
@@ -106,8 +108,18 @@ class AuthService extends ChangeNotifier {
           await _secureStorage.write(key: "jwt_token", value: newToken);
           _token = newToken;
           
-          // Imediatamente busca o perfil para confirmar a identidade
-          await fetchUserProfile(); 
+          // Criar o usuário a partir dos dados retornados no login
+          final userData = {
+            '_id': response['_id'],
+            'username': response['username'],
+            'role': response['role'],
+            'clan': response['clan'],
+            'federation': response['federation'],
+            'avatar': response['avatar'],
+            'bio': response['bio'],
+          };
+          
+          _currentUser = User.fromJson(userData);
           
           if (_currentUser != null) {
              _setAuthenticated(true);
@@ -116,7 +128,7 @@ class AuthService extends ChangeNotifier {
              _setLoading(false);
              return true;
           } else {
-            throw Exception("Autenticação bem-sucedida, mas falha ao buscar o perfil do usuário.");
+            throw Exception("Autenticação bem-sucedida, mas falha ao criar o perfil do usuário.");
           }
         }
       }
